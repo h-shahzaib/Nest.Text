@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Nest</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <Authors>Shahzaib Hassan</Authors>
+    <Company>h-shahzaib</Company>
+    <PackageId>Nest.Text</PackageId>
+    <Description>A C# library for generating structured text through a fluent API. Focuses on being minimal, has zero-dependencies, and is highly composable.</Description>
+    <PackageTags>
+      code-generation fluent-api source-generator dotnet text-builder csharp xml json yaml html css
+      codegen structured-text emit netstandard2.0 zero-dependency
+    </PackageTags>    <RepositoryUrl>https://github.com/h-shahzaib/Nest.Text</RepositoryUrl>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageIcon>Logo.jpg</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Readme.md" Pack="true" PackagePath="" />
+    <None Include="License.txt" Pack="true" PackagePath="" />
+    <None Include="Logo.jpg" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <Target Name="CopyDocsToParent" BeforeTargets="Build">
+    <Copy SourceFiles="License.txt" DestinationFolder="$(MSBuildProjectDirectory)\.." />
+    <Copy SourceFiles="Readme.md" DestinationFolder="$(MSBuildProjectDirectory)\.." />
+  </Target>
+
+</Project>
