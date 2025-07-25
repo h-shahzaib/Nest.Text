@@ -6,6 +6,6 @@ namespace Nest.Text
 {
     public interface IBlockBuilder
     {
-        public IChainBuilder B(Action<ITextBuilder> builder_act);
+        public IChainBuilder B(Action<ITextBuilder> builder_act, Action<TextBuilderOptions>? options_act = null);
     }
 }

@@ -57,9 +57,18 @@ namespace Nest.Text
             return GetChainBuilder(token, m_Context);
         }
 
-        public IChainBuilder B(Action<ITextBuilder> builder_act)
+        public IChainBuilder B(Action<ITextBuilder> builder_act, Action<TextBuilderOptions>? options_act = null)
         {
-            var builder = new TextBuilder(m_Context.Options);
+            TextBuilderOptions? options;
+            if (options_act != null)
+            {
+                options = new TextBuilderOptions(m_Context.Options);
+                options_act.Invoke(options);
+            }
+            else
+                options = m_Context.Options;
+
+            var builder = new TextBuilder(options);
             builder_act.Invoke(builder);
             builder.IsRootBuilder = false;
 

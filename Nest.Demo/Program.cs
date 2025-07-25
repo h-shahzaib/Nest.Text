@@ -1,6 +1,5 @@
 ﻿using Nest.Text;
-
-// dotnet build -c Release && dotnet pack -c Release
+using System;
 
 namespace Nest.Demo
 {
@@ -12,25 +11,19 @@ namespace Nest.Demo
             _.Options.BlockStyle = BlockStyle.Braces;
             _.Options.IndentSize = 4;
 
-            _.L("public static void Main(string[] args)")
-                .Chain(AddMainBody);
+            _.L("using System;");
+
+            _.L("[TestSpace]")
+            .L("namespace Generated").B(static _ =>
+            {
+                _.L("public static class Hello").B(static _ =>
+                {
+                    _.L("public static void SayHi() => Console.WriteLine(`Hello from the generator!`);");
+                },
+                o => o.BlockStyle = BlockStyle.IndentOnly);
+            });
 
             Console.WriteLine(_.ToString());
-        }
-
-        static void AddMainBody(IChainBuilder _)
-        {
-            _.B(_ =>
-            {
-                _.L("if (count > 6)").B(_ =>
-                {
-                    _.L("Console.WriteLine(`Hello World!`);");
-                })
-                .L("else").B(_ =>
-                {
-                    _.L("Console.WriteLine(`Goodbye!`);");
-                });
-            });
         }
     }
 }
