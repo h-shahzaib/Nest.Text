@@ -7,6 +7,6 @@ namespace Nest.Text
     public enum BlockStyle
     {
         IndentOnly,
-        Braces
+        CurlyBraces
     }
 }

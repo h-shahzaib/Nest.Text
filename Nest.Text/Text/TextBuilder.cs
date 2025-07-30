@@ -118,7 +118,7 @@ namespace Nest.Text
             return output.ToString();
         }
 
-        private static void BuildText(StringBuilder output, TextBuilder text_builder, int spaces_count)
+        private static void BuildText(StringBuilder output, TextBuilder text_builder, int indent_char_count)
         {
             var new_line = Environment.NewLine;
 
@@ -126,30 +126,30 @@ namespace Nest.Text
             {
                 var token = text_builder.m_Context.Tokens[i];
 
-                var spaces = new string(' ', spaces_count);
+                var indent = new string(token.Options.IndentChar, indent_char_count);
                 if (!text_builder.IsRootBuilder && token.Options.IndentSize > 0)
-                    spaces = new string(' ', spaces_count + token.Options.IndentSize);
+                    indent = new string(token.Options.IndentChar, indent_char_count + token.Options.IndentSize);
 
                 if (i != 0)
                     output.AppendLine();
 
                 if (token is LineToken line_token)
                 {
-                    output.Append(spaces + ApplyReplacements(token.Options, line_token.Line));
+                    output.Append(indent + ApplyReplacements(token.Options, line_token.Line));
                 }
                 else if (token is LinesToken lines_token)
                 {
-                    output.Append(string.Join(new_line, lines_token.Lines.Split([Environment.NewLine], StringSplitOptions.None).Select(i => spaces + ApplyReplacements(token.Options, i))));
+                    output.Append(string.Join(new_line, lines_token.Lines.Split([Environment.NewLine], StringSplitOptions.None).Select(i => indent + ApplyReplacements(token.Options, i))));
                 }
                 else if (token is BlockToken block_token)
                 {
-                    if (block_token.Builder.Options.BlockStyle == BlockStyle.Braces)
-                        output.AppendLine(spaces + '{');
+                    if (block_token.Options.BlockStyle == BlockStyle.CurlyBraces)
+                        output.AppendLine(indent + '{');
 
-                    BuildText(output, block_token.Builder, spaces.Length);
+                    BuildText(output, block_token.Builder, indent.Length);
 
-                    if (block_token.Builder.Options.BlockStyle == BlockStyle.Braces)
-                        output.Append(new_line + spaces + '}');
+                    if (block_token.Options.BlockStyle == BlockStyle.CurlyBraces)
+                        output.Append(new_line + indent + '}');
                 }
 
                 if (ShouldAddLineBreak(text_builder.m_Context.Tokens, i, token))

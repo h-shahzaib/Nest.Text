@@ -17,12 +17,9 @@ namespace Nest.Text
         /// </summary>
         public TextBuilderOptions()
         {
-            m_CharReplacements = new()
-            {
-                { '`', '"' }
-            };
-
+            m_CharReplacements = [];
             BlockStyle = BlockStyle.IndentOnly;
+            IndentChar = ' ';
             IndentSize = 4;
         }
 
@@ -34,6 +31,7 @@ namespace Nest.Text
         {
             m_CharReplacements = new Dictionary<char, char>(options.m_CharReplacements);
             BlockStyle = options.BlockStyle;
+            IndentChar = options.IndentChar;
             IndentSize = options.IndentSize;
         }
 
@@ -43,7 +41,12 @@ namespace Nest.Text
         public BlockStyle BlockStyle { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of spaces used per indentation level.
+        /// Gets or sets the character to be used for indentation
+        /// </summary>
+        public char IndentChar { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of <see cref="IndentChar"/> used per indentation level.
         /// </summary>
         public int IndentSize { get; set; }
 

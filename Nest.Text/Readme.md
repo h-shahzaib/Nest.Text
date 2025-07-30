@@ -2,6 +2,17 @@
 
 **Nest.Text** is a zero-dependency, fluent text generation library that helps you build structured content — from **C#**, **Python**, and **YAML** to **HTML**, **XML**, and more. It lets you describe what to generate — Nest takes care of how it's formatted.
 
+## Quick Navigation
+
+* [Installation](#installation)
+* [Core API](#what-is-it)
+* [Line Break Behavior](#line-break-behavior)
+* [Configuration Options](#options)
+* [Character Replacement](#character-replacement)
+* [Reusing Builder Patterns](#reusing-common-builder-patterns)
+* [Examples](#c-example)
+* [Debugging](#debugging)
+
 ---
 
 ## 📦 Installation
@@ -100,31 +111,14 @@ _.L("one")
 # ⚙️ Options
 
 ```csharp
-_.Options.BlockStyle = BlockStyle.Braces; // or IndentOnly (Default)
-_.Options.IndentSize = 4;                 // spaces per indent level
+_.Options.BlockStyle = BlockStyle.CurlyBraces;     // Choose between 'CurlyBraces' or 'IndentOnly' (default)
+_.Options.IndentChar = ' ';                        // Character used for indentation (e.g., space or tab)
+_.Options.IndentSize = 4;                          // Number of indent characters per level
 ```
 
 ---
 
-## 🔄 Smart Quote Replacement
-
-You can use backticks (\`) instead of escaped quotes in your strings:
-
-```csharp
-_.L("Console.WriteLine(`Hello World!`);"); 
-// Outputs: Console.WriteLine("Hello World!");
-```
-
-To customize or disable:
-
-```csharp
-_.Options.RegisterCharReplacement('`', '"');
-_.Options.RemoveCharReplacement('`');
-```
-
----
-
-## ⚙️ Options (Live Behavior & Inheritance)
+## ⚙️ Live Behavior & Inheritance
 
 `Options` in Nest.Text are **live** — changes apply immediately and affect all content added *after* the change.
 
@@ -144,53 +138,50 @@ Each line reflects the indent size active **at the time it's written**.
 
 ---
 
-### 📦 BlockStyle Inheritance
+## 🔄 Character Replacement
 
-When you change `BlockStyle`, it affects the **current block** and **all nested blocks** by default:
+You can register characters to be replaced with other characters:
 
 ```csharp
-_.L("namespace Demo").B(_ =>
-{
-    _.Options.BlockStyle = BlockStyle.Braces;
-
-    _.L("class A").B(_ =>
-    {
-        _.L("void Print()").B(_ =>
-        {
-            _.L("print(`Hello`)");
-        });
-    });
-});
+_.Options.RegisterCharReplacement('`', '"');
 ```
 
-✅ `namespace Demo` block itself & all blocks inside it will use now `Braces`.
-
-### ✋ Prevent Inheritance (Limit Scope)
-
-If you want to apply a `BlockStyle` to just the current block **without affecting nested blocks**, reset it at the end:
+And then use backticks (\`) instead of escaped quotes in your strings:
 
 ```csharp
-_.L("namespace Demo").B(_ =>
-{
-    _.L("class A").B(_ =>
-    {
-        _.L("void Print()").B(_ =>
-        {
-            _.L("print(`Hello`)");
-        });
-    });
-
-    _.Options.BlockStyle = BlockStyle.Braces;
-});
+_.L("Console.WriteLine(`Hello World!`);"); 
+// Outputs: Console.WriteLine("Hello World!");
 ```
 
 ---
 
-### 🔁 Inherited Automatically
+### 📦 BlockStyle
 
-Any block you enter inherits the parent’s `Options` by default — this includes indent size, block style, and character replacements. You can override or reset them at any level as needed.
+Changing the BlockStyle will, by default, apply the new style to all blocks, including nested ones.
+```csharp
+_.L("namespace Demo").B(_ =>
+{
+    _.L("class A").B(_ =>
+    {
+        _.L("void Print()").B(_ =>
+        {
+            _.L("print(`Hello`)");
+        });
+    });
 
-This behavior makes it easy to dynamically shape output without needing multiple builders or deep config trees.
+     _.Options.BlockStyle = BlockStyle.CurlyBraces;
+
+    _.L("class A").B(_ =>
+    {
+        _.L("void Print()").B(_ =>
+        {
+            _.L("print(`Hello`)");
+        });
+    });
+});
+```
+
+✅ all blocks after the change inside `namespace Demo` will use `CurlyBraces`.
 
 ---
 
@@ -297,12 +288,13 @@ This approach is especially helpful when generating large sections like methods,
 
 ---
 
-## 🧪 C# Example (Braces Block Style with Chaining)
+## 🧪 C# Example
 
 ```csharp
 var _ = TextBuilder.Create();
-_.Options.BlockStyle = BlockStyle.Braces;
+_.Options.BlockStyle = BlockStyle.CurlyBraces;
 _.Options.IndentSize = 4;
+_.Options.IndentChar = ' ';
 
 _.L("using System.Text;");
 
@@ -335,6 +327,8 @@ Console.WriteLine(_.ToString());
 ```csharp
 var _ = TextBuilder.Create();
 _.Options.BlockStyle = BlockStyle.IndentOnly;
+_.Options.IndentSize = 4;
+_.Options.IndentChar = ' ';
 
 _.L("def greet():").B(_ =>
 {
@@ -353,6 +347,7 @@ Console.WriteLine(_.ToString());
 var _ = TextBuilder.Create();
 _.Options.BlockStyle = BlockStyle.IndentOnly;
 _.Options.IndentSize = 2;
+_.Options.IndentChar = ' ';
 
 _.L("<div>").B(_ =>
 {
@@ -371,6 +366,8 @@ Console.WriteLine(_.ToString());
 ```csharp
 var _ = TextBuilder.Create();
 _.Options.BlockStyle = BlockStyle.IndentOnly;
+_.Options.IndentSize = 4;
+_.Options.IndentChar = ' ';
 
 _.L("<config>").B(_ =>
 {
@@ -389,6 +386,8 @@ Console.WriteLine(_.ToString());
 ```csharp
 var _ = TextBuilder.Create();
 _.Options.BlockStyle = BlockStyle.IndentOnly;
+_.Options.IndentSize = 4;
+_.Options.IndentChar = ' ';
 
 _.L("library:").B(_ =>
 {
@@ -429,19 +428,7 @@ Since everything is standard C#, you can step through and verify behavior intera
 
 ---
 
-## 📚 Summary
-
-* Fluent and **chainable** API
-* Smart formatting — line breaks where needed, not where not
-* Custom indentation and block styles
-* Backtick-friendly string writing
-* Debuggable at every step
-* No dependencies, works anywhere .NET runs
-
----
-
 ## 🔗 Links
 
 * 📦 NuGet: [Nest.Text on NuGet](https://www.nuget.org/packages/Nest.Text/)
 * 💻 GitHub: [github.com/h-shahzaib/Nest.Text](https://github.com/h-shahzaib/Nest.Text)
-
