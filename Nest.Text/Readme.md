@@ -1,6 +1,13 @@
 # **Nest.Text**
 
-**Nest.Text** is a zero-dependency, fluent text generation library that helps you build structured content — from **C#**, **Python**, and **YAML** to **HTML**, **XML**, and more. It lets you describe what to generate — Nest takes care of how it's formatted.
+**Nest.Text** is a zero-dependency, fluent structured text generation library that helps you build structured content with ease — from **C#**, **Python**, and **YAML** to **HTML**, **XML**, and more. It lets you describe what to generate — Nest takes care of how it's formatted.
+
+## 🔗 Links
+
+* 📦 NuGet: [Nest.Text on NuGet](https://www.nuget.org/packages/Nest.Text/)
+* 💻 GitHub: [github.com/h-shahzaib/Nest.Text](https://github.com/h-shahzaib/Nest.Text)
+
+---
 
 ## Quick Navigation
 
@@ -10,12 +17,12 @@
 * [Configuration Options](#options)
 * [Character Replacement](#character-replacement)
 * [Reusing Builder Patterns](#reusing-common-builder-patterns)
-* [Examples](#c-example)
+* [Examples](#examples)
 * [Debugging](#debugging)
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 dotnet add package Nest.Text
@@ -23,13 +30,13 @@ dotnet add package Nest.Text
 
 ---
 
-## 🚀 What Is It?
+## What Is It?
 
 Nest.Text provides a builder-style API to generate code, markup, or any structured text using:
 
 * `.L(...)` – Write one or more lines
 * `.B(b => { })` – Begin a block with nested content
-* `.L(...).B(b => { })` – Write a logical block of lines
+* `.L(...).B(b => { })` – Write a logical group of content
 
 Nest adds or avoids line breaks based on chaining and structure awareness.
 
@@ -108,7 +115,7 @@ _.L("one")
 
 ---
 
-# ⚙️ Options
+# Options
 
 ```csharp
 _.Options.BlockStyle = BlockStyle.CurlyBraces;     // Choose between 'CurlyBraces' or 'IndentOnly' (default)
@@ -118,11 +125,11 @@ _.Options.IndentSize = 4;                          // Number of indent character
 
 ---
 
-## ⚙️ Live Behavior & Inheritance
+## Live Behavior & Inheritance
 
 `Options` in Nest.Text are **live** — changes apply immediately and affect all content added *after* the change.
 
-### 🔧 Live Indent Example
+### Live Indent Example
 
 ```csharp
 _.L("Console.WriteLine(`A`)"); // uses current indent size (e.g. 4)
@@ -138,7 +145,7 @@ Each line reflects the indent size active **at the time it's written**.
 
 ---
 
-## 🔄 Character Replacement
+## Character Replacement
 
 You can register characters to be replaced with other characters:
 
@@ -155,7 +162,7 @@ _.L("Console.WriteLine(`Hello World!`);");
 
 ---
 
-### 📦 BlockStyle
+### BlockStyle
 
 Changing the BlockStyle will, by default, apply the new style to all blocks, including nested ones.
 ```csharp
@@ -234,7 +241,7 @@ _.L("public static void Main(string[] args)").B(_ => AddIfElse(_));
 
 ---
 
-### 🧩 Using `.Append()`
+### Using `.Append()`
 
 `.Append()` allows you to insert multiple external methods cleanly:
 
@@ -248,7 +255,7 @@ Each method `AddIfElse()`, `AddLoop()` still receives the same builder instance,
 
 ---
 
-### 🔁 Using `.Chain()`
+### Using `.Chain()`
 
 If you're inside a chain, use `.Chain()` and pass a method that takes `IChainBuilder`:
 
@@ -288,7 +295,10 @@ This approach is especially helpful when generating large sections like methods,
 
 ---
 
-## 🧪 C# Example
+# Examples
+Below are a few examples of how you can generate code for different languages:
+
+## #️⃣ C# Example (CurlyBraces)
 
 ```csharp
 var _ = TextBuilder.Create();
@@ -407,7 +417,7 @@ Console.WriteLine(_.ToString());
 
 ---
 
-## 🪛 Debugging
+## Debugging
 
 You can inspect the builder at any point during generation:
 
@@ -425,10 +435,3 @@ Alternatively, set a **breakpoint** anywhere and inspect the builder in your deb
 This is especially useful when checking structure, indentation, or formatting mid-flow.
 
 Since everything is standard C#, you can step through and verify behavior interactively — no custom tooling needed.
-
----
-
-## 🔗 Links
-
-* 📦 NuGet: [Nest.Text on NuGet](https://www.nuget.org/packages/Nest.Text/)
-* 💻 GitHub: [github.com/h-shahzaib/Nest.Text](https://github.com/h-shahzaib/Nest.Text)

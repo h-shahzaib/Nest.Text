@@ -74,7 +74,7 @@ namespace Nest.Text
 
             if (builder.m_Context.Tokens.Count > 0)
             {
-                var token = new BlockToken(m_Context.Options, builder);
+                var token = new BlockToken(options, builder);
                 m_Context.Tokens.Add(token);
                 return GetChainBuilder(token, m_Context);
             }
@@ -139,7 +139,7 @@ namespace Nest.Text
                 }
                 else if (token is LinesToken lines_token)
                 {
-                    output.Append(string.Join(new_line, lines_token.Lines.Split([Environment.NewLine], StringSplitOptions.None).Select(i => indent + ApplyReplacements(token.Options, i))));
+                    output.Append(string.Join(new_line, lines_token.Lines.Split(s_NewLineChars, StringSplitOptions.None).Select(i => indent + ApplyReplacements(token.Options, i))));
                 }
                 else if (token is BlockToken block_token)
                 {
