@@ -1,6 +1,10 @@
 ﻿using Nest.Text;
 using System;
 
+// TODO: Add a method to get a new instance of ITextBuilder/IChainBuilder inherited from some other text builder
+// TODO: Add a way to do .Append directly on ITextBuilder/IChainBuilder instead of an Action of those
+// TODO: Write a method to get IChainBuilder out of ITextBuilder instead of having of write .L() to get access
+
 namespace Nest.Demo
 {
     internal class Program
