@@ -21,6 +21,7 @@ namespace Nest.Text
             BlockStyle = BlockStyle.IndentOnly;
             IndentChar = ' ';
             IndentSize = 4;
+            LineBreak = Environment.NewLine;
         }
 
         /// <summary>
@@ -33,6 +34,7 @@ namespace Nest.Text
             BlockStyle = options.BlockStyle;
             IndentChar = options.IndentChar;
             IndentSize = options.IndentSize;
+            LineBreak = options.LineBreak;
         }
 
         /// <summary>
@@ -51,24 +53,23 @@ namespace Nest.Text
         public int IndentSize { get; set; }
 
         /// <summary>
+        /// Characters to be used as a line break
+        /// </summary>
+        public string LineBreak { get; set; }
+        public char[] LineBreakChars => LineBreak.ToCharArray();
+
+        /// <summary>
         /// Registers a character replacement to use during text generation.
         /// </summary>
         /// <param name="original_char">The character to be replaced.</param>
         /// <param name="replace_with">The character to replace with.</param>
-        /// <exception cref="NotSupportedException">
-        /// Thrown if the original character is a space, carriage return, newline, or part of <see cref="Environment.NewLine"/>.
-        /// </exception>
         public void RegisterCharReplacement(char original_char, char replace_with)
         {
             if (original_char == ' ')
                 throw new NotSupportedException("Replacing the space character (' ') is not supported.");
-            else if (original_char == '\r')
-                throw new NotSupportedException("Replacing the carriage return character ('\\r') is not supported.");
-            else if (original_char == '\n')
-                throw new NotSupportedException("Replacing the newline character ('\\n') is not supported.");
-            else if (Environment.NewLine.Contains(original_char))
+            else if (LineBreak.Contains(original_char))
                 throw new NotSupportedException(
-                    $"Replacing characters from Environment.NewLine (like '\\r' or '\\n') is not supported. Character: '\\u{(int)original_char:X4}'"
+                    $"Replacing line break characters is not supported. Character: '\\u{(int)original_char:X4}'"
                 );
 
             m_CharReplacements[original_char] = replace_with;

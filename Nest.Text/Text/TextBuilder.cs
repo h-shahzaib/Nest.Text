@@ -9,8 +9,6 @@ namespace Nest.Text
 {
     public sealed class TextBuilder : ITextBuilder, IChainBuilder
     {
-        private static readonly char[] s_NewLineChars = Environment.NewLine.ToCharArray();
-
         private readonly TextBuilderContext m_Context;
 
         public static ITextBuilder Create() => new TextBuilder();
@@ -27,11 +25,11 @@ namespace Nest.Text
 
         public IChainBuilder L(string line = "")
         {
-            line = line.Trim(s_NewLineChars);
+            line = line.Trim(m_Context.Options.LineBreakChars);
 
             Token token;
 
-            if (line.Contains(Environment.NewLine))
+            if (line.Contains(m_Context.Options.LineBreak))
                 token = new LinesToken(m_Context.Options, line);
             else
                 token = new LineToken(m_Context.Options, line);
@@ -43,11 +41,11 @@ namespace Nest.Text
 
         public IChainBuilder L(params string[] lines)
         {
-            var lines_str = string.Join(Environment.NewLine, lines).Trim(s_NewLineChars);
+            var lines_str = string.Join(m_Context.Options.LineBreak, lines).Trim(m_Context.Options.LineBreakChars);
 
             Token token;
 
-            if (lines_str.Contains(Environment.NewLine))
+            if (lines_str.Contains(m_Context.Options.LineBreak))
                 token = new LinesToken(m_Context.Options, lines_str);
             else
                 token = new LineToken(m_Context.Options, lines_str);
@@ -120,8 +118,6 @@ namespace Nest.Text
 
         private static void BuildText(StringBuilder output, TextBuilder text_builder, int indent_char_count)
         {
-            var new_line = Environment.NewLine;
-
             for (int i = 0; i < text_builder.m_Context.Tokens.Count; i++)
             {
                 var token = text_builder.m_Context.Tokens[i];
@@ -139,7 +135,7 @@ namespace Nest.Text
                 }
                 else if (token is LinesToken lines_token)
                 {
-                    output.Append(string.Join(new_line, lines_token.Lines.Split(s_NewLineChars, StringSplitOptions.None).Select(i => indent + ApplyReplacements(token.Options, i))));
+                    output.Append(ApplyReplacements(token.Options, indent + lines_token.Lines.Replace(token.Options.LineBreak, token.Options.LineBreak + indent)));
                 }
                 else if (token is BlockToken block_token)
                 {
@@ -149,7 +145,7 @@ namespace Nest.Text
                     BuildText(output, block_token.Builder, indent.Length);
 
                     if (block_token.Options.BlockStyle == BlockStyle.CurlyBraces)
-                        output.Append(new_line + indent + '}');
+                        output.Append(token.Options.LineBreak + indent + '}');
                 }
 
                 if (ShouldAddLineBreak(text_builder.m_Context.Tokens, i, token))
