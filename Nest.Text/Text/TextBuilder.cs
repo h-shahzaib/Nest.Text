@@ -170,14 +170,14 @@ namespace Nest.Text
 
         private static bool ShouldAddLineBreak(List<Token> tokens, int index, Token first_token)
         {
-            if (TokenIsEmpty(first_token))
+            if (IsExplicitLineBreakToken(first_token))
                 return false;
 
             var second_token = index + 1 < tokens.Count ? tokens[index + 1] : null;
             if (second_token is null)
                 return false;
 
-            if (TokenIsEmpty(second_token))
+            if (IsExplicitLineBreakToken(second_token))
                 return false;
 
             if (first_token is LinesToken && first_token.ParentToken is null)
@@ -196,12 +196,8 @@ namespace Nest.Text
             return false;
         }
 
-        private static bool TokenIsEmpty(Token token)
+        private static bool IsExplicitLineBreakToken(Token token)
         {
-            // This function is solely to handle cases where users add an explicit empty line
-            // so we do not add an implicit extra line there. Thats why it only handles 
-            // line token.
-
             return token switch
             {
                 LineToken line_token => string.IsNullOrWhiteSpace(line_token.Line),
