@@ -36,7 +36,7 @@ namespace Nest.Text
 
             m_Context.Tokens.Add(token);
 
-            return GetChainBuilder(token, m_Context);
+            return GetChainBuilder(token);
         }
 
         public IChainBuilder L(params string[] lines)
@@ -52,7 +52,7 @@ namespace Nest.Text
 
             m_Context.Tokens.Add(token);
 
-            return GetChainBuilder(token, m_Context);
+            return GetChainBuilder(token);
         }
 
         public IChainBuilder B(Action<ITextBuilder> builder_act, Action<TextBuilderOptions>? options_act = null)
@@ -74,13 +74,24 @@ namespace Nest.Text
             {
                 var token = new BlockToken(options, builder);
                 m_Context.Tokens.Add(token);
-                return GetChainBuilder(token, m_Context);
+                return GetChainBuilder(token);
             }
 
             return this;
         }
 
-        private TextBuilder GetChainBuilder(Token token, TextBuilderContext context)
+        public IChainBuilder GetChainBuilder()
+        {
+            var token = new EmptyToken(m_Context.Options);
+            m_Context.Tokens.Add(token);
+            
+            var chain_builder = new TextBuilder(m_Context);
+            chain_builder.ParentToken = token;
+            chain_builder.IsRootBuilder = IsRootBuilder;
+            return chain_builder;
+        }
+
+        private TextBuilder GetChainBuilder(Token token)
         {
             if (ParentToken != null)
             {
@@ -90,7 +101,7 @@ namespace Nest.Text
             }
             else
             {
-                var chain_builder = new TextBuilder(context);
+                var chain_builder = new TextBuilder(m_Context);
                 chain_builder.ParentToken = token;
                 chain_builder.IsRootBuilder = false;
                 return chain_builder;
@@ -118,15 +129,17 @@ namespace Nest.Text
 
         private static void BuildText(StringBuilder output, TextBuilder text_builder, int indent_char_count)
         {
+            Token? last_token = null;
+
             for (int i = 0; i < text_builder.m_Context.Tokens.Count; i++)
             {
                 var token = text_builder.m_Context.Tokens[i];
-
+                
                 var indent = new string(token.Options.IndentChar, indent_char_count);
                 if (!text_builder.IsRootBuilder && token.Options.IndentSize > 0)
                     indent = new string(token.Options.IndentChar, indent_char_count + token.Options.IndentSize);
 
-                if (i != 0)
+                if (i != 0 && last_token is not EmptyToken)
                     output.AppendLine();
 
                 if (token is LineToken line_token)
@@ -148,8 +161,10 @@ namespace Nest.Text
                         output.Append(token.Options.LineBreak + indent + '}');
                 }
 
-                if (ShouldAddLineBreak(text_builder.m_Context.Tokens, i, token))
+                if (token.Options.AddImplicitLineBreaks && ShouldAddLineBreak(text_builder.m_Context.Tokens, i, token))
                     output.AppendLine();
+
+                last_token = token;
             }
         }
 
@@ -183,6 +198,10 @@ namespace Nest.Text
 
         private static bool TokenIsEmpty(Token token)
         {
+            // This function is solely to handle cases where users add an explicit empty line
+            // so we do not add an implicit extra line there. Thats why it only handles 
+            // line token.
+
             return token switch
             {
                 LineToken line_token => string.IsNullOrWhiteSpace(line_token.Line),

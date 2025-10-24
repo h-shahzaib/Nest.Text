@@ -22,6 +22,7 @@ namespace Nest.Text
             IndentChar = ' ';
             IndentSize = 4;
             LineBreak = Environment.NewLine;
+            AddImplicitLineBreaks = true;
         }
 
         /// <summary>
@@ -35,6 +36,7 @@ namespace Nest.Text
             IndentChar = options.IndentChar;
             IndentSize = options.IndentSize;
             LineBreak = options.LineBreak;
+            AddImplicitLineBreaks = options.AddImplicitLineBreaks;
         }
 
         /// <summary>
@@ -56,7 +58,12 @@ namespace Nest.Text
         /// Characters to be used as a line break
         /// </summary>
         public string LineBreak { get; set; }
-        public char[] LineBreakChars => LineBreak.ToCharArray();
+        internal char[] LineBreakChars => LineBreak.ToCharArray();
+
+        /// <summary>
+        /// Controls whether the library will add implicit line breaks where appropriate
+        /// </summary>
+        public bool AddImplicitLineBreaks { get; set; }
 
         /// <summary>
         /// Registers a character replacement to use during text generation.

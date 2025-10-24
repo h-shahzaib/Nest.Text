@@ -8,5 +8,6 @@ namespace Nest.Text
     {
         public ITextBuilder Append(Action<ITextBuilder> builder_act);
         public TextBuilderOptions Options { get; }
+        public IChainBuilder GetChainBuilder();
     }
 }
